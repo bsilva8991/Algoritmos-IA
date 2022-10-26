@@ -1,0 +1,94 @@
+
+########## LIBRERÍAS A UTILIZAR ##########
+#Se importan la librerias a utilizar
+from sklearn import datasets #Dentro de datasets se encuentra las bases de datos
+import matplotlib.pyplot as plt  #Librería para plot
+
+########## PREPARAR LA DATA ##########
+#Importamos los datos de la misma librería de scikit-learn
+dataset = datasets.load_diabetes()
+print(dataset)
+
+########## ENTENDIMIENTO O ANÁLISIS DE LA DATA ##########
+#Verifico la información contenida en el dataset
+print('Información en el dataset:')
+print(dataset.keys())
+print()
+#data = datos independientes
+#target = columna de etiquetas o respuestas
+#target_names = nombres de las variables que se encuentran en la columna target
+#DESCR = descripción total del dataset
+#feature_name = nombre de la columna de los datos
+
+####### CONVERTIR DATOS BRUTOS RAW EN DATAFRAME #########
+import numpy as np
+import pandas as pd
+def answer_one():
+    
+    df = pd.DataFrame(data=dataset['data'], columns=dataset['feature_names'])
+    df['target'] = dataset['target']
+    
+    return df
+
+
+answer_one()
+
+#Verifico las características del dataset
+#Se describen los atributos o variables independientes
+#Se describen valores como la media, error estandar y peor
+#Con estas caracteristicas se describes si el tumor es benigno o maligno
+#El dataset esta bien estructurado sin errores de contenido o espacios en blanco
+
+print('Características del dataset:')
+print(dataset.DESCR)
+
+########## IMPLEMENTACIÓN DE ALGORITMO DE REGRESIÓN LINEAL ##########
+from sklearn.model_selection import train_test_split
+
+#Separo el 20% los datos de "train" en entrenamiento y prueba para probar los algoritmos
+diabetes_X, diabetes_y = datasets.load_diabetes(return_X_y=True)
+
+
+# Usar solo una característica
+diabetes_X = diabetes_X[:, np.newaxis, 2]
+
+# Dividir los datos en conjuntos de entrenamiento/prueba
+diabetes_X_train = diabetes_X[:-20]
+diabetes_X_test = diabetes_X[-20:]
+
+diabetes_y_train = diabetes_y[:-20]
+diabetes_y_test = diabetes_y[-20:]
+
+#Defino el algoritmo a utilizar
+#Bosques Aleatorios
+from sklearn import linear_model
+algoritmo = linear_model.LinearRegression()
+
+#Entreno el modelo
+algoritmo.fit(diabetes_X_train, diabetes_y_train)
+
+#Realizo una predicción
+diabetes_y_pred = algoritmo.predict(diabetes_X_test)
+
+from sklearn.metrics import mean_squared_error, r2_score
+
+# Coeficientes
+print("Coefficients: \n", algoritmo.coef_)
+# El error cuadrático medio
+print("Mean squared error: %.2f" % mean_squared_error(diabetes_y_test, diabetes_y_pred))
+# El coeficiente de determinación: Siendo 1 la predicción perfecta
+print("Coefficient of determination: %.2f" % r2_score(diabetes_y_test, diabetes_y_pred))
+
+
+
+# Grafico 
+fig, ax = plt.subplots()
+
+plt.scatter(diabetes_X_test, diabetes_y_test, color="black")
+plt.plot(diabetes_X_test, diabetes_y_pred, color="blue", linewidth=4)
+
+plt.xticks(())
+plt.yticks(())
+
+
+plt.show()
